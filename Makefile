@@ -1,16 +1,20 @@
-LDFLAGS=-fPIC -shared
+TARGETS=reuseaddr_x86_64.so reuseaddr_x86.so reuseaddr_armhf.so reuseaddr_armel.so
+LDFLAGS=-fPIC -shared -ldl
 CFLAGS=-Wall
 
-all: reuseaddr.so reuseaddr32.so reuseaddrarmhf.so reuseaddrarmel.so
+all: $(TARGETS)
 
-reuseaddr.so: reuseaddr_preload.c
-	gcc $(LDFLAGS) $(CFLAGS) -o $@ $<
+reuseaddr_x86_64.so: reuseaddr_preload.c
+	x86_64-linux-gnu-gcc $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-reuseaddr32.so: reuseaddr_preload.c
-	gcc $(LDFLAGS) $(CFLAGS) -m32 -o $@ $<
+reuseaddr_x86.so: reuseaddr_preload.c
+	x86_64-linux-gnu-gcc $(CFLAGS) -m32 -o $@ $< $(LDFLAGS)
 
-reuseaddrarmhf.so: reuseaddr_preload.c
-	arm-linux-gnueabihf-gcc $(LDFLAGS) $(CFLAGS) -o $@ $<
+reuseaddr_armhf.so: reuseaddr_preload.c
+	arm-linux-gnueabihf-gcc $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-reuseaddrarmel.so: reuseaddr_preload.c
-	arm-linux-gnueabi-gcc $(LDFLAGS) $(CFLAGS) -o $@ $<
+reuseaddr_armel.so: reuseaddr_preload.c
+	arm-linux-gnueabi-gcc $(CFLAGS) -o $@ $< $(LDFLAGS)
+
+clean:
+	rm $(TARGETS)
